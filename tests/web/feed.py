@@ -1,4 +1,3 @@
-
 from ..common import WebApiTestBase
 
 
@@ -73,7 +72,7 @@ class FeedTests(WebApiTestBase):
         self.assertGreater(
             len(results.get('user', {}).get(
                 'feed_reels_tray', {}).get(
-                    'edge_reels_tray_to_reel', {}).get('edges', [])), 0)
+                'edge_reels_tray_to_reel', {}).get('edges', [])), 0)
 
     def test_reels_feed(self):
         results = self.api.reels_feed(['25025320']).get('data', {})

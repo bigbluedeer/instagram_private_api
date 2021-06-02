@@ -1,8 +1,8 @@
 import json
 import time
 
-from ..utils import raise_if_invalid_rank_token
 from ..compatpatch import ClientCompatPatch
+from ..utils import raise_if_invalid_rank_token
 
 
 class LocationsEndpointsMixin(object):

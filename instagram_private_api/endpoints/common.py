@@ -1,4 +1,3 @@
-
 class ClientDeprecationWarning(DeprecationWarning):
     pass
 
@@ -14,9 +13,9 @@ class ClientExperimentalWarning(UserWarning):
 class MediaTypes(object):
     """Psuedo enum-ish/lookup class for media types."""
 
-    PHOTO = 1       #: Photo type
-    VIDEO = 2       #: Video type
-    CAROUSEL = 8    #: Carousel/Album type
+    PHOTO = 1  #: Photo type
+    VIDEO = 2  #: Video type
+    CAROUSEL = 8  #: Carousel/Album type
 
     ALL = (PHOTO, VIDEO, CAROUSEL)
 

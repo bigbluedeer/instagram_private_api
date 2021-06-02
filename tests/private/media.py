@@ -1,6 +1,6 @@
-import unittest
 import json
 import time
+import unittest
 
 from ..common import (
     ClientError,
@@ -293,8 +293,8 @@ class MediaTests(ApiTestBase):
         generated_uuid = self.api.generate_uuid()
         with compat_mock.patch('instagram_private_api.endpoints.media.gen_user_breadcrumb') \
                 as gen_user_breadcrumb_mock, \
-                compat_mock.patch('instagram_private_api.Client.generate_uuid')\
-                as generate_uuid_mock:
+                compat_mock.patch('instagram_private_api.Client.generate_uuid') \
+                        as generate_uuid_mock:
             gen_user_breadcrumb_mock.return_value = breadcrumb
             generate_uuid_mock.return_value = generated_uuid
             params = {
@@ -311,10 +311,10 @@ class MediaTests(ApiTestBase):
                 params=params)
 
         test_comments = [
-            'x' * 301,      # Test max length
-            'X' * 300,      # Test all caps
-            '#test #test #test #test #test'     # Test hashtags limit
-            'https://google.com http://google.com'      # Test urls limit
+            'x' * 301,  # Test max length
+            'X' * 300,  # Test all caps
+            '#test #test #test #test #test'  # Test hashtags limit
+            'https://google.com http://google.com'  # Test urls limit
         ]
         for t in test_comments:
             with self.assertRaises(ValueError):
@@ -506,7 +506,6 @@ class MediaTests(ApiTestBase):
 
         with compat_mock.patch('instagram_private_api.endpoints.media.randint') as randint_mock, \
                 compat_mock.patch('instagram_private_api.endpoints.media.time.time') as time_mock:
-
             time_mock.return_value = ts_now
             randint_mock.return_value = 0
             params = {

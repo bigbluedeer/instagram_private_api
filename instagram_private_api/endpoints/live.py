@@ -1,5 +1,5 @@
-from ..utils import gen_user_breadcrumb
 from ..compatpatch import ClientCompatPatch
+from ..utils import gen_user_breadcrumb
 
 
 class LiveEndpointsMixin(object):

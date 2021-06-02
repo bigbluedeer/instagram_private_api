@@ -1,8 +1,8 @@
 import warnings
 
 from .common import ClientDeprecationWarning
-from ..compatpatch import ClientCompatPatch
 from ..compat import compat_urllib_parse
+from ..compatpatch import ClientCompatPatch
 from ..utils import raise_if_invalid_rank_token
 
 
@@ -49,7 +49,7 @@ class FeedEndpointsMixin(object):
              for m in res.get('feed_items', [])]
         return res
 
-    def feed_popular(self, **kwargs):   # pragma: no cover
+    def feed_popular(self, **kwargs):  # pragma: no cover
         """Get popular feed. This endpoint is believed to be obsolete. Do not use."""
         warnings.warn(
             'This endpoint is believed to be obsolete. Do not use.',

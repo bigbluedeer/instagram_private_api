@@ -46,7 +46,7 @@ class ClientCompatPatch(object):
     @classmethod
     def media(cls, media, drop_incompat_keys=False):
         """Patch a media object"""
-        media_shortcode = media.get('code') or media.get('shortcode')   # for media_info2
+        media_shortcode = media.get('code') or media.get('shortcode')  # for media_info2
         media['link'] = 'https://www.instagram.com/p/{0!s}/'.format(media_shortcode)
         try:
             caption = (media.get('caption') or
@@ -122,8 +122,8 @@ class ClientCompatPatch(object):
             media.get('date', '') or media.get('taken_at_timestamp', ''))
 
         usertags = (
-            media.get('usertags', {}).get('nodes', []) or
-            [ut['node'] for ut in media.get('edge_media_to_tagged_user', {}).get('edges', [])])
+                media.get('usertags', {}).get('nodes', []) or
+                [ut['node'] for ut in media.get('edge_media_to_tagged_user', {}).get('edges', [])])
         if not usertags:
             media['users_in_photo'] = []
         else:
@@ -215,14 +215,14 @@ class ClientCompatPatch(object):
         user['website'] = user['external_url']
         counts = {
             'media': (
-                user.get('media', {}).get('count')
-                or user.get('edge_owner_to_timeline_media', {}).get('count')),
+                    user.get('media', {}).get('count')
+                    or user.get('edge_owner_to_timeline_media', {}).get('count')),
             'followed_by': (
-                user.get('followed_by', {}).get('count')
-                or user.get('edge_followed_by', {}).get('count')),
+                    user.get('followed_by', {}).get('count')
+                    or user.get('edge_followed_by', {}).get('count')),
             'follows': (
-                user.get('follows', {}).get('count')
-                or user.get('edge_follow', {}).get('count')),
+                    user.get('follows', {}).get('count')
+                    or user.get('edge_follow', {}).get('count')),
         }
         user['counts'] = counts
         if drop_incompat_keys:

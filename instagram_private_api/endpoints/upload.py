@@ -1,26 +1,27 @@
 import json
-import time
-from random import randint
 import re
+import time
 import warnings
+from random import randint
+from socket import timeout, error as SocketError
+from ssl import SSLError
 
+from .common import ClientDeprecationWarning
+from .common import MediaTypes
 from ..compat import (
     compat_urllib_error, compat_urllib_request,
     compat_http_client
 )
+from ..compatpatch import ClientCompatPatch
 from ..errors import ErrorHandler, ClientError, ClientConnectionError
 from ..http import MultipartFormDataEncoder
 from ..utils import (
     max_chunk_count_generator, max_chunk_size_generator,
     get_file_size
 )
-from ..compatpatch import ClientCompatPatch
-from .common import ClientDeprecationWarning
-from .common import MediaTypes
-from socket import timeout, error as SocketError
-from ssl import SSLError
+
 try:
-    ConnectionError = ConnectionError       # pylint: disable=redefined-builtin
+    ConnectionError = ConnectionError  # pylint: disable=redefined-builtin
 except NameError:  # Python 2:
     class ConnectionError(Exception):
         pass
@@ -302,7 +303,7 @@ class UploadEndpointsMixin(object):
             'story_media_creation_date': str(int(time.time()) - randint(11, 20)),
             'client_shared_at': str(int(time.time()) - randint(3, 10)),
             'client_timestamp': str(int(time.time())),
-            'configure_mode': 1,      # 1 - REEL_SHARE, 2 - DIRECT_STORY_SHARE
+            'configure_mode': 1,  # 1 - REEL_SHARE, 2 - DIRECT_STORY_SHARE
             'device': {
                 'manufacturer': self.phone_manufacturer,
                 'model': self.phone_device,
@@ -348,7 +349,7 @@ class UploadEndpointsMixin(object):
             'story_media_creation_date': str(int(time.time()) - randint(11, 20)),
             'client_shared_at': str(int(time.time()) - randint(3, 10)),
             'client_timestamp': str(int(time.time())),
-            'configure_mode': 1,      # 1 - REEL_SHARE, 2 - DIRECT_STORY_SHARE
+            'configure_mode': 1,  # 1 - REEL_SHARE, 2 - DIRECT_STORY_SHARE
             'poster_frame_index': 0,
             'length': duration * 1.0,
             'audio_muted': False,
@@ -449,7 +450,7 @@ class UploadEndpointsMixin(object):
             self.logger.debug('RESPONSE: {0:d} {1!s}'.format(e.code, error_response))
             ErrorHandler.process(e, error_response)
         except (SSLError, timeout, SocketError,
-                compat_urllib_error.URLError,   # URLError is base of HTTPError
+                compat_urllib_error.URLError,  # URLError is base of HTTPError
                 compat_http_client.HTTPException) as connection_error:
             raise ClientConnectionError('{} {}'.format(
                 connection_error.__class__.__name__, str(connection_error)))
@@ -627,7 +628,7 @@ class UploadEndpointsMixin(object):
                         ErrorHandler.process(e, error_response)
 
                     except (SSLError, timeout, SocketError,
-                            compat_urllib_error.URLError,   # URLError is base of HTTPError
+                            compat_urllib_error.URLError,  # URLError is base of HTTPError
                             compat_http_client.HTTPException) as connection_error:
                         raise ClientConnectionError('{} {}'.format(
                             connection_error.__class__.__name__, str(connection_error)))

@@ -1,12 +1,16 @@
-import unittest
 import argparse
-import os
 import json
-import sys
 import logging
+import os
 import re
+import sys
+import unittest
 import warnings
 
+from .common import (
+    Client, ClientError, ClientLoginError, ClientCookieExpiredError,
+    __version__, to_json, from_json
+)
 from .private import (
     AccountTests, CollectionsTests, DiscoverTests,
     FeedTests, FriendshipTests, LiveTests,
@@ -16,11 +20,6 @@ from .private import (
     ClientTests, ApiUtilsTests, CompatPatchTests,
     IGTVTests,
 )
-from .common import (
-    Client, ClientError, ClientLoginError, ClientCookieExpiredError,
-    __version__, to_json, from_json
-)
-
 
 if __name__ == '__main__':
 
@@ -142,12 +141,14 @@ if __name__ == '__main__':
     tests.extend(CompatPatchTests.init_all(api))
     tests.extend(ApiUtilsTests.init_all())
 
+
     def match_regex(test_name):
         for test_re in args.tests:
             test_re = r'{0!s}'.format(test_re)
             if re.match(test_re, test_name):
                 return True
         return False
+
 
     if args.tests:
         tests = filter(lambda x: match_regex(x['name']), tests)

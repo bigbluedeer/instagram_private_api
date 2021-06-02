@@ -1,10 +1,10 @@
-import unittest
 import argparse
-import os
 import json
-import sys
 import logging
+import os
 import re
+import sys
+import unittest
 import warnings
 
 from .common import (
@@ -98,12 +98,14 @@ if __name__ == '__main__':
     web_api = Client(auto_patch=True, drop_incompat_keys=False)
     tests.extend(UnauthenticatedTests.init_all(web_api))
 
+
     def match_regex(test_name):
         for test_re in args.tests:
             test_re = r'{0!s}'.format(test_re)
             if re.match(test_re, test_name):
                 return True
         return False
+
 
     if args.tests:
         tests = filter(lambda x: match_regex(x['name']), tests)

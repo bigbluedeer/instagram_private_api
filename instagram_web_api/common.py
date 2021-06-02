@@ -1,4 +1,3 @@
-
 class ClientDeprecationWarning(DeprecationWarning):
     pass
 

@@ -1,12 +1,11 @@
-import time
-import hmac
 import base64
 import hashlib
-from random import randint
+import hmac
 import os
-from datetime import datetime
 import re
-
+import time
+from datetime import datetime
+from random import randint
 
 VALID_UUID_RE = r'^[a-f\d]{8}\-[a-f\d]{4}\-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$'
 
@@ -45,6 +44,7 @@ class Chunk(object):
     """
     Simple object class to encapulate an upload Chunk
     """
+
     def __init__(self, index, start, end, total):
         self.index = index
         self.start = start

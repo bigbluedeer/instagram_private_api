@@ -1,5 +1,6 @@
-import unittest
 import json
+import unittest
+
 try:
     # python 2.x
     from urllib2 import urlopen
@@ -161,14 +162,14 @@ class AccountTests(ApiTestBase):
                 compat_mock.patch('instagram_private_api.Client._read_response') as read_response:
             generate_uuid_mock.return_value = generated_uuid
             call_api.side_effect = [
-                '',     # Test 1
-                '',     # Test 1
-                '',     # Test 2
-                ClientError(        # Test 2
+                '',  # Test 1
+                '',  # Test 1
+                '',  # Test 2
+                ClientError(  # Test 2
                     'Internal Server Error', code=500,
                     error_response='Internal Server Error'),
-                '',     # Test 3
-                ClientLoginError(       # Test 2
+                '',  # Test 3
+                ClientLoginError(  # Test 2
                     'Invalid', code=400,
                     error_response='Invalid'),
             ]
@@ -349,7 +350,7 @@ class AccountTests(ApiTestBase):
         with compat_mock.patch('instagram_private_api.Client._read_response') as read_response, \
                 compat_mock.patch('instagram_private_api.Client.default_headers') as default_headers, \
                 compat_mock.patch('instagram_private_api.endpoints.accounts.compat_urllib_request.Request') \
-                as request, \
+                        as request, \
                 compat_mock.patch('instagram_private_api.http.random.choice') as randchoice_mock:
             default_headers.return_value = {'Header': 'X'}
             randchoice_mock.return_value = 'x'

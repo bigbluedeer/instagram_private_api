@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import logging
 import json
+import logging
 import re
 
 logger = logging.getLogger(__name__)
@@ -19,6 +19,7 @@ class ClientErrorCodes(object):
 class ClientError(Exception):
     """Generic error class, catch-all for most client issues.
     """
+
     def __init__(self, msg, code=None, error_response=''):
         self.code = code or 0
         self.error_response = error_response
@@ -87,7 +88,6 @@ class ClientFeedbackRequiredError(ClientError):
 
 
 class ErrorHandler(object):
-
     KNOWN_ERRORS_MAP = [
         {'patterns': ['bad_password', 'invalid_user'], 'error': ClientLoginError},
         {'patterns': ['login_required'], 'error': ClientLoginRequiredError},

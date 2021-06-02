@@ -1,16 +1,17 @@
-import json
-import os.path
-import logging
 import argparse
+import json
+import logging
+import os.path
+
 try:
     from instagram_private_api import (
         Client, __version__ as client_version)
 except ImportError:
     import sys
+
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
     from instagram_private_api import (
         Client, __version__ as client_version)
-
 
 if __name__ == '__main__':
 
@@ -42,7 +43,7 @@ if __name__ == '__main__':
     while next_max_id:
         results = api.user_feed(user_id, max_id=next_max_id)
         updates.extend(results.get('items', []))
-        if len(updates) >= 30:       # get only first 30 or so
+        if len(updates) >= 30:  # get only first 30 or so
             break
         next_max_id = results.get('next_max_id')
 

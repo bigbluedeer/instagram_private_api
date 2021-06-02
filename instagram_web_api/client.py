@@ -5,19 +5,20 @@
 
 # -*- coding: utf-8 -*-
 
-import logging
+import gzip
 import hashlib
 import json
+import logging
+import random
 import re
-import gzip
-from io import BytesIO
+import string
 import time
 import warnings
 from functools import wraps
-import string
-import random
+from io import BytesIO
 from socket import timeout, error as SocketError
 from ssl import SSLError
+
 from .compat import (
     compat_urllib_request, compat_urllib_parse,
     compat_urllib_parse_urlparse, compat_urllib_error,
@@ -29,9 +30,10 @@ from .errors import (
     ClientConnectionError, ClientBadRequestError,
     ClientForbiddenError, ClientThrottledError,
 )
+
 try:  # Python 3:
     # Not a no-op, we're adding this to the namespace so it can be imported.
-    ConnectionError = ConnectionError       # pylint: disable=redefined-builtin
+    ConnectionError = ConnectionError  # pylint: disable=redefined-builtin
 except NameError:  # Python 2:
     class ConnectionError(Exception):
         pass
@@ -48,6 +50,7 @@ def login_required(fn):
         if not args[0].is_authenticated:
             raise ClientError('Method requires authentication.', 403)
         return fn(*args, **kwargs)
+
     return wrapper
 
 
@@ -56,7 +59,7 @@ class Client(object):
 
     API_URL = 'https://www.instagram.com/query/'
     GRAPHQL_API_URL = 'https://www.instagram.com/graphql/query/'
-    USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.2 Safari/605.1.15'      # noqa
+    USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.2 Safari/605.1.15'  # noqa
     MOBILE_USER_AGENT = 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.0 Mobile/15E148 Safari/604.1'  # noqa
 
     def __init__(self, user_agent=None, **kwargs):
@@ -254,7 +257,7 @@ class Client(object):
 
         data = None
         if params or params == '':
-            if params == '':    # force post if empty string
+            if params == '':  # force post if empty string
                 data = ''.encode('ascii')
             else:
                 data = compat_urllib_parse.urlencode(params).encode('ascii')
@@ -294,7 +297,7 @@ class Client(object):
             raise ClientError(msg, e.code)
 
         except (SSLError, timeout, SocketError,
-                compat_urllib_error.URLError,   # URLError is base of HTTPError
+                compat_urllib_error.URLError,  # URLError is base of HTTPError
                 compat_http_client.HTTPException,
                 ConnectionError) as connection_error:
             raise ClientConnectionError('{} {}'.format(
@@ -303,7 +306,7 @@ class Client(object):
     @staticmethod
     def _sanitise_media_id(media_id):
         """The web API uses the numeric media ID only, and not the formatted one where it's XXXXX_YYY"""
-        if re.match(r'[0-9]+_[0-9]+', media_id):    # endpoint uses the entirely numeric ID, not XXXX_YYY
+        if re.match(r'[0-9]+_[0-9]+', media_id):  # endpoint uses the entirely numeric ID, not XXXX_YYY
             media_id = media_id.split('_')[0]
         return media_id
 
@@ -393,7 +396,7 @@ class Client(object):
             on_login_callback(self)
         return login_res
 
-    def user_info(self, user_id, **kwargs):     # pragma: no cover
+    def user_info(self, user_id, **kwargs):  # pragma: no cover
         """
         OBSOLETE. Get user info.
 
@@ -486,14 +489,14 @@ class Client(object):
         if self.auto_patch:
             [ClientCompatPatch.media(media['node'], drop_incompat_keys=self.drop_incompat_keys)
              for media in info.get('data', {}).get('user', {}).get(
-                 'edge_owner_to_timeline_media', {}).get('edges', [])]
+                'edge_owner_to_timeline_media', {}).get('edges', [])]
 
         if kwargs.pop('extract', True):
             return info.get('data', {}).get('user', {}).get(
                 'edge_owner_to_timeline_media', {}).get('edges', [])
         return info
 
-    def media_info(self, short_code, **kwargs):     # pragma: no cover
+    def media_info(self, short_code, **kwargs):  # pragma: no cover
         """
         OBSOLETE. Get media info. Does not properly extract carousel media.
 
@@ -512,7 +515,7 @@ class Client(object):
                  'likes {{count}}, owner {{id, username, full_name, profile_pic_url, '
                  'is_private, is_verified}}, __typename, '
                  'thumbnail_src, video_views, video_url }}'.format(
-                     **{'media_code': short_code})
+                **{'media_code': short_code})
         }
         media = self._make_request(self.API_URL, params=params)
         if not media.get('code'):
@@ -585,7 +588,7 @@ class Client(object):
         if self.auto_patch:
             [ClientCompatPatch.comment(c['node'], drop_incompat_keys=self.drop_incompat_keys)
              for c in info.get('data', {}).get('shortcode_media', {}).get(
-                 'edge_media_to_comment', {}).get('edges', [])]
+                'edge_media_to_comment', {}).get('edges', [])]
 
         if kwargs.pop('extract', True):
             return [c['node'] for c in info.get('data', {}).get('shortcode_media', {}).get(
@@ -669,7 +672,7 @@ class Client(object):
         if self.auto_patch:
             [ClientCompatPatch.list_user(u['node'], drop_incompat_keys=self.drop_incompat_keys)
              for u in info.get('data', {}).get('user', {}).get(
-                 'edge_follow', {}).get('edges', [])]
+                'edge_follow', {}).get('edges', [])]
 
         if kwargs.pop('extract', True):
             return [u['node'] for u in info.get('data', {}).get('user', {}).get(
@@ -709,7 +712,7 @@ class Client(object):
         if self.auto_patch:
             [ClientCompatPatch.list_user(u['node'], drop_incompat_keys=self.drop_incompat_keys)
              for u in info.get('data', {}).get('user', {}).get(
-                 'edge_followed_by', {}).get('edges', [])]
+                'edge_followed_by', {}).get('edges', [])]
 
         if kwargs.pop('extract', True):
             return [u['node'] for u in info.get('data', {}).get('user', {}).get(
@@ -1135,7 +1138,7 @@ class Client(object):
         if self.auto_patch:
             [ClientCompatPatch.media(media['node'], drop_incompat_keys=self.drop_incompat_keys)
              for media in info.get('data', {}).get('user', {}).get(
-                 'edge_user_to_photos_of_you', {}).get('edges', [])]
+                'edge_user_to_photos_of_you', {}).get('edges', [])]
 
         return info
 

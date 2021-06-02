@@ -1,18 +1,19 @@
 import json
+from socket import timeout, error as SocketError
+from ssl import SSLError
 
 from ..compat import (
     compat_urllib_request, compat_urllib_error,
     compat_http_client
 )
+from ..compatpatch import ClientCompatPatch
 from ..errors import (
     ErrorHandler, ClientError, ClientLoginError, ClientConnectionError
 )
 from ..http import MultipartFormDataEncoder
-from ..compatpatch import ClientCompatPatch
-from socket import timeout, error as SocketError
-from ssl import SSLError
+
 try:
-    ConnectionError = ConnectionError       # pylint: disable=redefined-builtin
+    ConnectionError = ConnectionError  # pylint: disable=redefined-builtin
 except NameError:  # Python 2:
     class ConnectionError(Exception):
         pass
@@ -155,7 +156,7 @@ class AccountsEndpointsMixin(object):
             self.logger.debug('RESPONSE: {0:d} {1!s}'.format(e.code, error_response))
             ErrorHandler.process(e, error_response)
         except (SSLError, timeout, SocketError,
-                compat_urllib_error.URLError,   # URLError is base of HTTPError
+                compat_urllib_error.URLError,  # URLError is base of HTTPError
                 compat_http_client.HTTPException) as connection_error:
             raise ClientConnectionError('{} {}'.format(
                 connection_error.__class__.__name__, str(connection_error)))

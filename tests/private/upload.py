@@ -1,8 +1,9 @@
-import unittest
 import json
-import time
 import os
+import time
+import unittest
 from io import BytesIO
+
 try:
     # python 2.x
     from urllib2 import urlopen
@@ -268,7 +269,7 @@ class UploadTests(ApiTestBase):
                    'Content-Disposition: form-data; name="photo"; filename="pending_media_%(ts)s.jpg"\r\n' \
                    'Content-Type: application/octet-stream\r\n' \
                    'Content-Transfer-Encoding: binary\r\n\r\n...\r\n' \
-                   '--%(boundary)s--\r\n'\
+                   '--%(boundary)s--\r\n' \
                    % {'uuid': self.api.uuid,
                       'boundary': 'x' * 30,
                       'csrftoken': self.api.csrftoken,
@@ -341,7 +342,7 @@ class UploadTests(ApiTestBase):
                     'story_media_creation_date': str(int(ts_now)),
                     'client_shared_at': str(int(ts_now)),
                     'client_timestamp': str(int(ts_now)),
-                    'configure_mode': 1,      # 1 - REEL_SHARE, 2 - DIRECT_STORY_SHARE
+                    'configure_mode': 1,  # 1 - REEL_SHARE, 2 - DIRECT_STORY_SHARE
                     'device': {
                         'manufacturer': self.api.phone_manufacturer,
                         'model': self.api.phone_device,
@@ -488,14 +489,14 @@ class UploadTests(ApiTestBase):
 
             call_api_side_effect = [
                 {'video_upload_urls': [{'url': 'http://localhost', 'job': '1111'}]},  # Upload request
-                {'status': 'ok'},    # Upload photo thumbnail request
+                {'status': 'ok'},  # Upload photo thumbnail request
             ]
             if raise_transcodeclienterror:
                 call_api_side_effect.extend([{'status': 'ok'}, {'status': 'ok'}])
             call_api_side_effect.append(
                 {'status': 'ok', 'media':
                     {'code': 'x', 'taken_at': 149000000, 'media_type': 1, 'caption': None,
-                     'user': {'pk': 10, 'profile_pic_url': ''}}},    # Configure video request
+                     'user': {'pk': 10, 'profile_pic_url': ''}}},  # Configure video request
             )
             call_api.side_effect = call_api_side_effect
 
@@ -516,8 +517,8 @@ class UploadTests(ApiTestBase):
             if raise_transcodeclienterror:
                 # add another one due to retry
                 read_response_side_effect.extend([
-                    json.dumps({'status': 'ok', 'upload_id': upload_id}),   # Response to thumbnail upload
-                    json.dumps({'status': 'ok', 'upload_id': upload_id}),   # Response to thumbnail upload
+                    json.dumps({'status': 'ok', 'upload_id': upload_id}),  # Response to thumbnail upload
+                    json.dumps({'status': 'ok', 'upload_id': upload_id}),  # Response to thumbnail upload
                 ])
             read_response.side_effect = read_response_side_effect
 
@@ -625,7 +626,7 @@ class UploadTests(ApiTestBase):
                     'story_media_creation_date': str(int(ts_now)),
                     'client_shared_at': str(int(ts_now)),
                     'client_timestamp': str(int(ts_now)),
-                    'configure_mode': 1,      # 1 - REEL_SHARE, 2 - DIRECT_STORY_SHARE
+                    'configure_mode': 1,  # 1 - REEL_SHARE, 2 - DIRECT_STORY_SHARE
                     'poster_frame_index': 0,
                     'length': duration * 1.0,
                     'audio_muted': False,

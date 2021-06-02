@@ -23,7 +23,7 @@ class DiscoverEndpointsMixin(object):
              if item.get('media') else item for item in res['items']]
         return res
 
-    def discover_channels_home(self):       # pragma: no cover
+    def discover_channels_home(self):  # pragma: no cover
         """Discover channels home"""
         warnings.warn(
             'This endpoint is believed to be obsolete. Do not use.',

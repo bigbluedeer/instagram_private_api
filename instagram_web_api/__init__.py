@@ -1,13 +1,12 @@
 # flake8: noqa
 
 from .client import Client
+from .common import ClientDeprecationWarning
 from .compatpatch import ClientCompatPatch
 from .errors import (
     ClientError, ClientLoginError, ClientCookieExpiredError,
     ClientConnectionError, ClientForbiddenError,
-    ClientThrottledError,ClientBadRequestError,
+    ClientThrottledError, ClientBadRequestError,
 )
-from .common import ClientDeprecationWarning
-
 
 __version__ = '1.6.0'

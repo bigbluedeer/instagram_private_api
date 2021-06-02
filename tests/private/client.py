@@ -1,5 +1,5 @@
-from io import BytesIO
 import json
+from io import BytesIO
 
 from ..common import (
     ApiTestBase, Client, ClientThrottledError,
@@ -179,6 +179,7 @@ class ClientTests(ApiTestBase):
 
         def test_ua_setter():
             self.api.user_agent = 'Agent X'
+
         self.assertRaises(ValueError, test_ua_setter)
 
         custom_ua = self.api.generate_useragent(phone_manufacturer='BrandX')

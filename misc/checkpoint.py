@@ -1,6 +1,7 @@
-import re
 import gzip
+import re
 from io import BytesIO
+
 try:
     # python 2.x
     from urllib2 import urlopen, Request
@@ -58,7 +59,7 @@ class Checkpoint:
                 cookie += '{0!s}={1!s}; '.format(c, unquote_plus(cookie_mobj.group('val')))
 
         self.cookie = cookie
-        data = {'csrfmiddlewaretoken': csrf, 'email': 'Verify by Email'}    # 'sms': 'Verify by SMS'
+        data = {'csrfmiddlewaretoken': csrf, 'email': 'Verify by Email'}  # 'sms': 'Verify by SMS'
 
         headers['Referer'] = self.endpoint
         headers['Origin'] = 'https://i.instagram.com'

@@ -1,12 +1,12 @@
 import json
 import re
-import warnings
 import time
+import warnings
 from random import randint
 
 from .common import ClientExperimentalWarning, MediaTypes
-from ..utils import gen_user_breadcrumb
 from ..compatpatch import ClientCompatPatch
+from ..utils import gen_user_breadcrumb
 
 
 class MediaEndpointsMixin(object):
@@ -104,7 +104,7 @@ class MediaEndpointsMixin(object):
 
         while (((results.get('has_more_comments') and results.get('next_max_id'))
                 or (results.get('has_more_headload_comments') and results.get('next_min_id')))
-                and len(comments) < n):
+               and len(comments) < n):
 
             if results.get('has_more_comments'):
                 kwargs.update({'max_id': results.get('next_max_id')})

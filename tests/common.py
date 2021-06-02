@@ -1,13 +1,15 @@
 # flake8: noqa
-import unittest
-import time
 import codecs
+import time
+import unittest
+
 try:
     import unittest.mock as compat_mock
 except ImportError:
     import mock as compat_mock
 import sys
 import os
+
 try:
     from instagram_private_api import (
         __version__, Client, ClientError, ClientLoginError,
@@ -19,7 +21,7 @@ try:
         InstagramID, gen_user_breadcrumb,
         max_chunk_size_generator, max_chunk_count_generator, get_file_size,
         ig_chunk_generator
-    )   # noqa
+    )  # noqa
     from instagram_private_api.constants import Constants
     from instagram_private_api.compat import compat_urllib_parse
 except ImportError:
@@ -34,7 +36,7 @@ except ImportError:
         InstagramID, gen_user_breadcrumb,
         max_chunk_size_generator, max_chunk_count_generator, get_file_size,
         ig_chunk_generator
-    )   # noqa
+    )  # noqa
     from instagram_private_api.constants import Constants
     from instagram_private_api.compat import compat_urllib_parse
 
@@ -82,7 +84,7 @@ class ApiTestBase(unittest.TestCase):
         self.test_media_id = media_id
         self.sleep_interval = 2.5
         if testname.endswith('_mock'):
-            self.sleep_interval = 0      # sleep a bit between tests to avoid HTTP429 errors
+            self.sleep_interval = 0  # sleep a bit between tests to avoid HTTP429 errors
 
     @classmethod
     def setUpClass(cls):
@@ -107,7 +109,7 @@ class WebApiTestBase(unittest.TestCase):
         self.api = api
         self.sleep_interval = 2.5
         if testname.endswith('_mock'):
-            self.sleep_interval = 0   # sleep a bit between tests to avoid HTTP429 errors
+            self.sleep_interval = 0  # sleep a bit between tests to avoid HTTP429 errors
 
     @classmethod
     def setUpClass(cls):

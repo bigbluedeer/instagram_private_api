@@ -1,4 +1,3 @@
-
 from ..common import (
     WebApiTestBase, WebClientError as ClientError,
     WebClientLoginError as ClientLoginError,

@@ -1,8 +1,8 @@
 import json
 
 from ..compat import compat_urllib_parse
-from ..utils import raise_if_invalid_rank_token
 from ..compatpatch import ClientCompatPatch
+from ..utils import raise_if_invalid_rank_token
 
 
 class TagsEndpointsMixin(object):

@@ -1,15 +1,17 @@
-from io import BytesIO
-import sys
 import codecs
 import mimetypes
 import random
 import string
+import sys
+from io import BytesIO
+
 from .compat import compat_cookiejar, compat_pickle
 
 
 class ClientCookieJar(compat_cookiejar.CookieJar):
     """Custom CookieJar that can be pickled to/from strings
     """
+
     def __init__(self, cookie_string=None, policy=None):
         compat_cookiejar.CookieJar.__init__(self, policy)
         if cookie_string:
@@ -39,9 +41,10 @@ class MultipartFormDataEncoder(object):
     Modified from
     http://stackoverflow.com/questions/1270518/python-standard-library-to-post-multipart-form-data-encoded-data
     """
+
     def __init__(self, boundary=None):
         self.boundary = boundary or \
-            ''.join(random.choice(string.ascii_letters + string.digits + '_-') for _ in range(30))
+                        ''.join(random.choice(string.ascii_letters + string.digits + '_-') for _ in range(30))
         self.content_type = 'multipart/form-data; boundary={}'.format(self.boundary)
 
     @classmethod

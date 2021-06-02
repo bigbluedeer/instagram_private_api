@@ -1,5 +1,6 @@
-import unittest
 import time
+import unittest
+
 try:
     # python 2.x
     from urllib2 import urlopen
@@ -80,8 +81,8 @@ class UploadTests(WebApiTestBase):
                    'Content-Type: application/octet-stream\r\n' \
                    'Content-Transfer-Encoding: binary\r\n\r\n...\r\n' \
                    '--{boundary}--\r\n'.format(
-                       boundary='----WebKitFormBoundary{}'.format('x' * 16),
-                       upload_id=int(ts_now * 1000))
+                boundary='----WebKitFormBoundary{}'.format('x' * 16),
+                upload_id=int(ts_now * 1000))
             request.assert_called_with(
                 'https://www.instagram.com/create/upload/photo/',
                 body.encode('utf-8'), headers=headers)

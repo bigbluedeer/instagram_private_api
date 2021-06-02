@@ -1,5 +1,5 @@
-import unittest
 import time
+import unittest
 
 from ..common import WebApiTestBase, WebClientError as ClientError, compat_mock
 

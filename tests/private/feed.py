@@ -125,7 +125,7 @@ class FeedTests(ApiTestBase):
         self.assertEqual(results.get('status'), 'ok')
         self.assertGreater(len(results.get('items', [])), 0, 'No items returned.')
         self.assertGreater(len(results.get('ranked_items', [])), 0, 'No ranked_items returned.')
-        if results.get('story'):    # Returned only in version >= 10.22.0
+        if results.get('story'):  # Returned only in version >= 10.22.0
             self.assertGreater(len(results.get('story', {}).get('items', [])), 0, 'No story items returned.')
 
     def test_user_story_feed(self):
@@ -141,7 +141,7 @@ class FeedTests(ApiTestBase):
         self.assertEqual(results.get('status'), 'ok')
         self.assertGreater(len(results.get('items', [])), 0, 'No items returned.')
         self.assertGreater(len(results.get('ranked_items', [])), 0, 'No ranked_items returned.')
-        if results.get('story'):    # Returned only in version >= 10.22.0
+        if results.get('story'):  # Returned only in version >= 10.22.0
             self.assertGreater(len(results.get('story', {}).get('items', [])), 0, 'No story items returned.')
 
     def test_saved_feed(self):

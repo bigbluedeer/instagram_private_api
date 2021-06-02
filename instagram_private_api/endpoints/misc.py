@@ -1,8 +1,8 @@
 import warnings
 
 from .common import ClientDeprecationWarning
-from ..constants import Constants
 from ..compatpatch import ClientCompatPatch
+from ..constants import Constants
 
 
 class MiscEndpointsMixin(object):

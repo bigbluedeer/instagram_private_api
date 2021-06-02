@@ -62,7 +62,7 @@ class LiveTests(ApiTestBase):
         ]
 
     def test_user_broadcast(self):
-        broadcast = self.api.user_broadcast('25025320')     # Instagram
+        broadcast = self.api.user_broadcast('25025320')  # Instagram
         self.assertIsNone(broadcast)
 
     @unittest.skip('Modifies data.')
@@ -148,7 +148,7 @@ class LiveTests(ApiTestBase):
         with compat_mock.patch('instagram_private_api.endpoints.live.gen_user_breadcrumb') \
                 as gen_user_breadcrumb_mock, \
                 compat_mock.patch('instagram_private_api.Client.generate_uuid') \
-                as generate_uuid_mock:
+                        as generate_uuid_mock:
             gen_user_breadcrumb_mock.return_value = breadcrumb
             generate_uuid_mock.return_value = generated_uuid
             params = {
