@@ -483,7 +483,8 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
             res = response.read().decode('utf8')
         return res
 
-    def _call_api(self, endpoint, params=None, query=None, return_response=False, unsigned=False, version='v1'):
+    def _call_api(self, endpoint, params=None, query=None, return_response=False, return_content=False, unsigned=False,
+                  version='v1'):
         """
         Calls the private api.
 
@@ -491,6 +492,7 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         :param params: POST parameters
         :param query: GET url query parameters
         :param return_response: return the response instead of the parsed json object
+        :param return_content: return the decoded response content instead of the parsed json object
         :param unsigned: use post params as-is without signing
         :param version: for the versioned api base url. Default 'v1'.
         :return:
@@ -540,6 +542,10 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
 
         response_content = self._read_response(response)
         self.logger.debug('RESPONSE: {0:d} {1!s}'.format(response.code, response_content))
+
+        if return_content:
+            return response_content
+
         json_response = json.loads(response_content)
 
         if json_response.get('message', '') == 'login_required':

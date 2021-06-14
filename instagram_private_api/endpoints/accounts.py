@@ -1,4 +1,5 @@
 import json
+import re
 from socket import timeout, error as SocketError
 from ssl import SSLError
 
@@ -8,7 +9,7 @@ from ..compat import (
 )
 from ..compatpatch import ClientCompatPatch
 from ..errors import (
-    ErrorHandler, ClientError, ClientLoginError, ClientConnectionError
+    ErrorHandler, ClientError, ClientLoginError, ClientConnectionError, ClientChallengeRequiredError
 )
 from ..http import MultipartFormDataEncoder
 
@@ -47,8 +48,12 @@ class AccountsEndpointsMixin(object):
             'login_attempt_count': '0',
         }
 
-        login_response = self._call_api(
-            'accounts/login/', params=login_params, return_response=True)
+        try:
+            login_response = self._call_api(
+                'accounts/login/', params=login_params, return_response=True)
+        except ClientChallengeRequiredError as error:
+            print("challenge login required")
+            login_response = self._challenge_login(error)
 
         if not self.csrftoken:
             raise ClientError(
@@ -73,6 +78,130 @@ class AccountsEndpointsMixin(object):
         # self.direct_v2_inbox()
         # self.news_inbox()
         # self.explore()
+
+    def _challenge_login(self, error):
+        """
+        Login through challenge
+
+        :param ClientChallengeRequiredError error: ClientChallengeRequiredError that occurred
+        """
+        # derived from the snippet at https://poorlau.com/blog/instagram-checkpoint-challenge-required/
+        # the poorlau website is offline, but a cached version has been saved here:
+        """
+        https://web.archive.org/web/20210602152807/http://cc.bingj.com/cache.aspx?q=url%3Ahttps%253A%252F%252Fpoorlau
+        .com%252Fblog%252Finstagram-checkpoint-challenge-required%252F&d=5040535175244228&mkt=en-WW&setlang=en-US&w=
+        xlqoGnw1q9T0K_h9qZNHMczGhMb066NI)
+        """
+        challenge_url = error.challenge_url
+        response = self._call_api(challenge_url, return_content=True)
+
+        # extract data from the response content
+        data = re.findall(r"window\._sharedData\s*=\s*({.*?});", response)
+
+        # check that the security code input field is present
+        if not data:
+            raise ClientChallengeRequiredError("challenge failed, could not retrieve choice data from response",
+                                               error_response=response)
+
+        # make a choice for the challenge
+        selected_choice = self._get_choice_type(data[0])
+
+        # send choice data (response is not useful)
+        choice_data = {'choice': selected_choice}
+        self._call_api(challenge_url, params=choice_data, unsigned=True)
+
+        security_code = None
+        # only pass security code if valid
+        while not len(security_code) == 6 and not security_code.isdigit():
+            # only print if input was received
+            if security_code:
+                print("Wrong security code")
+
+            security_code = input("Enter security code: ").strip()
+
+        # send security code
+        code_data = {'security_code': security_code}
+        response = self._call_api(challenge_url, params=code_data, unsigned=True, return_content=True)
+
+        # check if the verification was sucessfull
+        if "Please check the code we sent you and try again" in response:
+            return self.login()
+
+        # check if the response requires a refresh
+        if re.findall(r"http-equiv=\"refresh\"", response):
+            # get the response content
+            content = re.findall(r"content=\"(.*?)\"\s", response)[0]
+            url = re.match(r".*?url=instagram://(.*?)", content)
+
+            # make request to url
+            response = self._call_api(url, return_response=True)
+
+        return response
+
+    def _get_choice_type(self, data):
+        """Get a choice to use in the challenge"""
+        if isinstance(data, str):
+            data = json.loads(data)
+
+        try:
+            # check for the checkpoint choices in the extra data (probably only when one choice is already chosen)
+            pre_choices = data["entry_data"]["Challenge"][0]["extraData"]["content"][-1]["fields"]
+
+            if pre_choices is None:
+                raise ClientLoginError("cannot retrieve choices from response, fields are empty. please solve the "
+                                       "challenge on the website instead", error_response=json.dumps(data))
+
+            choices = pre_choices[0]["values"]
+        except KeyError:
+            choices = []
+            # get choices
+            try:
+                fields = data["entry_data"]["Challenge"][0]["fields"]
+                try:
+                    # check for phone number choice
+                    choices.append({"label": f"Phone: {fields['phone_number']}", "value": 0})
+                except KeyError:
+                    pass
+
+                try:
+                    # check for email choice
+                    choices.append({"label": f"Email: {fields['email']}", "value": 1})
+                except KeyError:
+                    pass
+            except KeyError:
+                pass
+        except Exception:
+            raise ClientChallengeRequiredError("unknown error while retrieving choices from response",
+                                               error_response=json.dumps(data))
+
+        if not choices:
+            raise ClientChallengeRequiredError("challenge failed, could not retrieve choices",
+                                               error_response=json.dumps(data))
+
+        if len(choices) > 1:
+            # multiple choices present
+            possible_values = {}
+            print("Select where to send the security code:")
+
+            for choice in choices:
+                print(f"{choice['label']} - {choice['value']}")
+                possible_values[str(choice["value"])] = True
+
+            selected_choice = None
+
+            # only pass choice if valid
+            while selected_choice not in possible_values.keys():
+                # only print if input was received
+                if selected_choice:
+                    print(f"Choice \"{selected_choice}\" is not valid. Try again")
+
+                selected_choice = input("Your choice: ").strip()
+        else:
+            # only one choice present
+            print(f"Message with security code sent to: {choices[0]['label']}")
+            selected_choice = choices[0]["value"]
+
+        return selected_choice
 
     def current_user(self):
         """Get current user info"""
