@@ -55,6 +55,30 @@ class UsersEndpointsMixin(object):
              for m in res.get('user_story', {}).get('reel', {}).get('items', [])]
         return res
 
+    def user_account_info(self, user_id):
+        """
+        Get user account info for a specified user id
+
+        :param user_id:
+        :return:
+        """
+        res = self._call_api('users/{user_id!s}/account_details/'.format(**{'user_id': user_id}))
+        if self.auto_patch:
+            ClientCompatPatch.user(res['user'], drop_incompat_keys=self.drop_incompat_keys)
+        return res
+
+    def user_former_usernames(self, user_id):
+        """
+        Get users former usernames for a specified user id
+
+        :param user_id:
+        :return:
+        """
+        res = self._call_api('users/{user_id!s}/former_usernames/'.format(**{'user_id': user_id}))
+        if self.auto_patch:
+            ClientCompatPatch.user(res['user'], drop_incompat_keys=self.drop_incompat_keys)
+        return res
+
     def user_map(self, user_id):  # pragma: no cover
         """
         Get a list of geo-tagged media from a user
