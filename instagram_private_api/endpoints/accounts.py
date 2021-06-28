@@ -138,7 +138,8 @@ class AccountsEndpointsMixin(object):
 
         return response
 
-    def _get_choice_type(self, data):
+    @staticmethod
+    def _get_choice_type(data):
         """Get a choice to use in the challenge"""
         if isinstance(data, str):
             data = json.loads(data)
