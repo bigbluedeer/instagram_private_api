@@ -154,6 +154,32 @@ class FeedEndpointsMixin(object):
                  for m in reel.get('items', [])]
         return res
 
+    def reels_media_ids(self, reels_ids, **kwargs):
+        """
+        Get multiple reel/highlight media by their ids
+
+        :param reels_ids: list of reels IDs
+        :param kwargs:
+        :return:
+        """
+        reels_ids = [str(x) for x in reels_ids]
+        # required to trick urlencode to make a valid query
+        # query for multiple ids: ?reels_ids=reel_id1&reels_ids=reel_id2&...
+        query = [("reels_ids", reels_id) for reels_id in reels_ids]
+        query += list(kwargs.items())
+
+        # used mostly for highlights, but still on the feed endpoint
+        res = self._call_api('feed/reels_media/', query=query)
+        if self.auto_patch:
+            for reel_media in res.get('reels_media', []):
+                [ClientCompatPatch.media(m, drop_incompat_keys=self.drop_incompat_keys)
+                 for m in reel_media.get('items', [])]
+            # reel id is omitted
+            for _, reel in list(res.get('reels', {}).items()):
+                [ClientCompatPatch.media(m, drop_incompat_keys=self.drop_incompat_keys)
+                 for m in reel.get('items', [])]
+        return res
+
     def feed_tag(self, tag, rank_token, **kwargs):
         """
         Get tag feed
